@@ -6,7 +6,6 @@
 <?php include 'head.php'; ?>
 <style>
 body
-	
 {
 		background-image: url("backgroud.jpg");
 }
