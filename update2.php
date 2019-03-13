@@ -27,14 +27,8 @@ else
 {
 	header("location: login.php");
 }
-	
-	
-$servername = "localhost";
-$username = "Isabelle";
-$password = "12345";
-$databaseName ="3_isabelle_pessdb";
-$conn = mysqli_connect("localhost", "$username", "$password",$databaseName);	
-	
+							
+		
 	$sql = "SELECT * FROM patrolcar WHERE patrolcarId='".$_POST['patrolcarId']."'";
 	
 	$result = mysqli_query($conn, $sql) or die(mysqli_error($conn));
@@ -121,20 +115,14 @@ if(isset($_POST["btnUpdate"])){
 	$result2 = mysqli_query($conn,$sql2);;
 
 
-	 if(!$result2) 
+	if(!$result2) 
 	 {
        die('Could not update data: ' . mysqli_error());
      }
-else
-	{
-       echo "Updated data successfully\n";
-	   header("location: update1.php");
-	}
-	
-if(!mysqli_query($conn, $sql))
-	{
-		die('Error4:' .mysqli_error());
-	}
+	else
+	 {
+	   header("location: logcall.php");
+	 }
 	
 	// If patrol car status is on-site(4) then capture the time of arrival 
 	
@@ -149,41 +137,40 @@ if(!mysqli_query($conn, $sql))
 	}
 }
 
-	else if ( $_POST["patrolcarStatusId"] == '3'){
-		
-	$sql="SELECT incidentId FROM dispatch WHERE timeCompleted IS NULL AND patrolcarId='".$_POST["patrolcarId"]."'";
-		
-	$result=mysqli_query($conn, $sql);
+	if ($_POST["patrolcarStatusId"] =='3')
+	{ 
+	 $sql="UPDATE dispatch SET timeCompleted=NOW() WHERE timeCompleted is NULL AND 
+	 patrolcarId='".$_POST["patrolcarId"]."'";
+	 $result=mysqli_query($conn, $sql);
+	 $incidentId;	
+	}
 	
-	$incidentId;	
-		
-	while($row=mysqli_fetch_array($conn,$sql))
-	{	$sql="UPDATE incident SET incidentStatusId='3' WHERE incidentId='$incidentId' AND incidentId NOT IN (SELECT incidentId FROM dispatch WHERE timeCompleted IS NULL)";
+	while($row=mysqli_fetch_array($result))
+	{
 	
-	// patrolcarId, patrolcatStatusId
-	echo $incidentId;
+		$incidentId = $row['incidentId'];
+	}
+	
+	// echo $incidentId;
 		
-	//Now then can update dispatch
-	$sql="UPDATE dispatch SET timecompleted=NOW() WHERE timeCompleted is NULL AND patrolcarId='".$_POST["patrolcarId"]."'";
-		
+	// Now then can update dispatch
+	 $sql="UPDATE incident SET incidentStatusId='3' WHERE incidentId='incidentId' AND incidentId NOT IN (SELECT incidentId FROM dispatch WHERE timeCompleted IS NULL)";	
 	if(!mysqli_query($conn, $sql))
 	{
 		die('Error4:' .mysqli_error());
 	}
 		
 	// Last but not least, update incident in incident table to completed (3) all patrol car attended it are FREE now
-		
-	$sql="UPDATE incident SET incidentStatusId='3' WHERE incidentId='$incidentId' AND incidentId NOT IN (SELECT incidentId FROM dispatch WHERE timeCompleted IS NULL)";
+	
 		
 	if(!mysqli_query($conn, $sql))
 	{
 		die('Error5:' .mysqli_error());
 	}
-}
-	}
 
 
 mysqli_close($conn);
+	
 ?>
 	
 

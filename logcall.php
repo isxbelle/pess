@@ -1,11 +1,11 @@
 <!doctype html>
-<html>
-<head>
+<html><head>
 <meta charset="utf-8">
 <title>Log Call</title>
 <?php include 'head.php'; ?>
 <style>
 body
+	
 {
 		background-image: url("backgroud.jpg");
 }
@@ -31,7 +31,7 @@ else
 	
 	
 $servername = "localhost";
-$username = "Isabelle";
+$username = "belle";
 $password = "12345";
 $databaseName ="3_isabelle_pessdb";
 
@@ -48,11 +48,16 @@ mysqli_select_db($conn,"3_isabelle_pessdb");
 	 $incidentTypeId = $_POST['incidenttype'];
 	 $incidentLocation = $_POST['location'];
 	 $incidentDesc = $_POST['incidentDesc'];
-	 /*sql query for inserting data into database*/
 	 mysqli_query($conn,"INSERT INTO incident(callerName,phoneNumber,incidentTypeId,incidentLocation,incidentDesc) 
 	 values ('$callerName','$phoneNumber','$incidentTypeId','$incidentLocation','$incidentDesc')") or die(mysqli_error($conn));
 }
 	
+ 		 $result = mysqli_query($conn,"SELECT*FROM incidenttype"); 
+         $incidenttype;
+         while($row = mysqli_fetch_array($result))
+         {
+			$incidenttypes[$row['incidentTypeId']] = $row['incidentTypeDesc'];
+         }   	
 	
 
 	
@@ -65,15 +70,15 @@ mysqli_select_db($conn,"3_isabelle_pessdb");
 
 <tr>
 	<td>Caller Name:</td>
-	<td><p><input type="text" name="callerName"/></p></td>
+	<td><p><input type="text" name="callerName" /></p></td>
 </tr>
 <tr>
 	<td>Contact No:</td>
-	<td><p><input type="number" name="contactNo"/></p></td>
+	<td><p><input type="number" name="contactNo" /></p></td>
 </tr>
 <tr>
 	<td>Location:</td>
-	<td><p><input type="text" name="location"/></p></td>
+	<td><p><input type="text" name="location" /></p></td>
 </tr>
 	
 <tr>
@@ -84,23 +89,22 @@ mysqli_select_db($conn,"3_isabelle_pessdb");
 	<select name="incidenttype">
 	<?php
 	$result = mysqli_query($conn,"SELECT * FROM incidenttype"); 	
-	while($row = mysqli_fetch_array($result))
-	{
-	?>
-	<option><?php echo $row["incidentTypeDesc"];?></option>";
+	foreach($incidenttypes as $key => $value){?>
+	<option value="<?php echo $key ?>"
+	<?php if($key == $incidenttypes) {?> selected="selected"
+	<?php } ?>><?php echo $value ?></option>
 	
 	<?php
 	}
 	
 	?>
-	
 	</select>
 	</p>
 	</td>
 </tr>
 <tr>
 	<td>Description:</td>
-	<td><p><textarea name="incidentDesc" rows="5" cols="50"></textarea></p></td>
+	<td><p><textarea name="incidentDesc" rows="5" cols="50" ></textarea></p></td>
 </tr>
 <tr>
 	<td align="center" colspan="2"><button type="reset" style="margin-right: 50px;">Reset</button>  <button name="save" type="submit" style="margin-left: 50px;">Submit</button></td>
@@ -122,6 +126,7 @@ function validateForm() {
     alert("Name must be filled out");
     return false;
   }
+   
 	else if  (b == "")
 {
 	
